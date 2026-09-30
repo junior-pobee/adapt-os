@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0">
+  <title>Chess Game</title>
+  <link rel="stylesheet"
+    href="chess.css">
+</head>
+
+<body>
+  <div class="container">
+    <img src="logo.jpg" height="50px" width="60px" style="border-radius:17px; border:2px solid white;">
+    <h5 style="margin-bottom:9%;">ADAPT OS</h5>
+    
+    
+    <!-- Main Menu -->
+    <div id="menu" class="screen">
+      <h2 style="font-size:15px; color:dimgrey;">CHESS GAME <br>Choose Game Mode</h2>
+      <button id="btn-1p"
+        class="menu-btn" style="padding:4px 4px; box-shadow:0 2px 4px 4px #333;">🤖 1 Player (vs
+        Bot) </button>
+      <div id="bot-level"
+        class="hidden">
+        <label for="depth">Bot
+          Difficulty:</label>
+        <select id="depth">
+          <option value="1">Easy
+          </option>
+          <option value="2" selected>
+            Medium</option>
+          <option value="3">Hard
+          </option>
+        </select>
+        <label>
+          <input type="checkbox"
+            id="player-is-black"> Play
+          as Black (bot moves first)
+        </label>
+        <button id="bot-start"
+          class="menu-btn" style="padding:4px 4px; box-shadow:0 2px 4px 4px #333;">Start Game
+          ▶</button>
+      </div>
+      <button id="btn-2p"
+        class="menu-btn" style="padding:3px 3px; box-shadow:0 4px 4px #333; font-size:16px;">👥 2 Players
+        (vs Friend)</button>
+        <button style="background:green; padding:5px 18px; border-radius:10px;"><a href="index.html" style="text-decoration:none; color:white; font-weight:bold; font-size:18px;">⏪BACK</a></button>
+    </div>
+    
+    <!-- Game Screen -->
+    <div id="game"
+      class="screen hidden">
+      <div id="status">White's turn
+      </div>
+      <div id="board-wrap">
+        <div id="board"></div>
+      </div>
+      <div class="controls">
+        <button id="btn-restart">Restart
+          Game</button>
+        <button id="btn-menu">Back to
+          Menu</button>
+      </div>
+      <div id="captured"></div>
+    </div>
+  </div>
+  <script src="chess.js"></script>
+</body>
+
+</html>
