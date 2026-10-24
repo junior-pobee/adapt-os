@@ -1,5 +1,5 @@
 <div align="center">
-**ADAPT OS
+*ADAPT OS
   <hr>
   Adapt OS is an all-in-one productivity, file and financial management workspace.
   
