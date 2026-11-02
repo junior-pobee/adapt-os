@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { localWorkspaceStorage } from "@/platform/storage";
-import { formatMoney } from "@/finance/finance-core";
 import type { Locale } from "@/i18n/messages";
+import { normalizeExternalUrl, validateUploadBatch } from "@/platform/workspace-validation";
 
 type Task = { id: string; title: string; detail: string; due: string; priority: "Low" | "Medium" | "High"; done: boolean; createdAt: string };
 type Note = { id: string; title: string; body: string; updatedAt: string };
