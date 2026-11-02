@@ -7,7 +7,7 @@ import { WorkspaceModules } from "@/components/workspace-modules";
 import { supportedCurrencies } from "@/platform/currency";
 import { localeDirection } from "@/platform/locale";
 
-const navigation = [
+const navigation: [string, string, string][] = [
   ["dashboard","Dashboard","⌂"],["finance","Finance","◈"],["learning","Learning Studio","⌘"],
   ["files","File Vault","▤"],["tasks","Tasks & Projects","✓"],["research","Research Desk","⌕"],
   ["notes","Notes","▧"],["ai","AI Centre","✧"],["profile","My Profile","◎"],["settings","Settings","⚙"]
