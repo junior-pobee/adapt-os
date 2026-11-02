@@ -265,6 +265,9 @@
         const loading = $("loadingScreen");
         const app = $("app");
 
+        clearTimeout(loadingSafetyTimer);
+        loadingSafetyTimer = null;
+
         if (loading) {
             loading.classList.add("hidden");
             loading.style.display = "none";
@@ -289,33 +292,15 @@
 
         if (app) {
             app.classList.remove("hidden");
-
-            /*
-               Important:
-               We don't permanently depend on the CSS .hidden
-               class. This prevents the blank-page problem.
-            */
             app.style.visibility = "hidden";
             app.style.opacity = "0";
         }
 
         clearTimeout(loadingSafetyTimer);
 
-        /*
-           Normal loading time.
-        */
         loadingSafetyTimer = setTimeout(() => {
             showApp();
-        }, 9000);
-
-        /*
-           Emergency fallback.
-           Even if something delays initialization, the page
-           will not remain blank.
-        */
-        setTimeout(() => {
-            showApp();
-        }, 9000);
+        }, 5000);
     }
 
     /* =========================================================
