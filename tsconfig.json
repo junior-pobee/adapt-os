@@ -26,7 +26,8 @@
       "@/*": [
         "./src/*"
       ]
-    }
+    },
+    "noUncheckedIndexedAccess": true
   },
   "include": [
     "next-env.d.ts",
