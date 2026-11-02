@@ -1,4 +1,4 @@
-export type CurrencyCode = "GHS" | "USD" | "EUR" | "GBP" | "NGN" | "KES" | "ZAR";
+export type CurrencyCode = string;
 export type TransactionType = "income" | "expense";
 export interface LedgerTransaction {
     id: string;
