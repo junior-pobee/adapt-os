@@ -4,7 +4,15 @@
     <meta charset="UTF-8">
 
     <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+          content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#080b14">
+    <meta name="application-name" content="ADAPT OS">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ADAPT OS">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icons/adapt-icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="logo.jpg">
           
           <meta name="google-site-verification" content="QeFD3ZmGfNaZEtqg_uvDTgmK_vIZS1AmYeyXnaJPy0Q" />
 
@@ -12,7 +20,7 @@
           content= "Emmanuel Pobee Okpoti, developer of ADAPT OS - Your adaptive learning, productivity, finance and file management workspace.">
           <meta name="keywords" content="ADAPT OS, Emmanuel Pobee Okpoti, Personal OS, Productivity app Ghana, Adaptive workspace">
 <meta name="author" content="Emmanuel Pobee Okpoti">
-    <title>ADAPT OS | Adaptive Workspace </title>
+    <title>ADAPT OS | Adaptive Workspace</title>
     
     <script type="application/ld+json">
         {
@@ -325,6 +333,10 @@
 
 
             <div class="header-actions">
+
+                <button id="installAppButton" class="install-app-button hidden" type="button" aria-label="Install ADAPT OS">
+                    <span aria-hidden="true">↓</span><span>Install app</span>
+                </button>
 
                 <button id="notificationButton"
                         class="header-icon-button"
