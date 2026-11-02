@@ -5334,4 +5334,5 @@ if ("serviceWorker" in navigator && location.protocol !== "file:") {
     }
 
     if (isStandalone() && installButton) installButton.classList.add("hidden");
+    if (!isStandalone()) showInstallButton();
 })();
