@@ -5275,3 +5275,63 @@ ${escapeHTML(text)}
     }
 
 })();
+
+
+if ("serviceWorker" in navigator && location.protocol !== "file:") {
+    window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js", { scope: "./" }).catch(error => {
+            console.error("ADAPT OS offline support could not start:", error);
+        });
+    });
+}
+
+(() => {
+    let installPrompt = null;
+    const installButton = document.getElementById("installAppButton");
+
+    const isStandalone = () =>
+        window.matchMedia("(display-mode: standalone)").matches ||
+        window.navigator.standalone === true;
+
+    const showInstallButton = () => {
+        if (installButton && !isStandalone()) installButton.classList.remove("hidden");
+    };
+
+    window.addEventListener("beforeinstallprompt", event => {
+        event.preventDefault();
+        installPrompt = event;
+        showInstallButton();
+    });
+
+    window.addEventListener("appinstalled", () => {
+        installPrompt = null;
+        if (installButton) installButton.classList.add("hidden");
+        window.dispatchEvent(new CustomEvent("adaptos:installed"));
+    });
+
+    if (installButton) {
+        installButton.addEventListener("click", async () => {
+            if (installPrompt) {
+                installPrompt.prompt();
+                await installPrompt.userChoice;
+                installPrompt = null;
+                installButton.classList.add("hidden");
+                return;
+            }
+
+            if (/iphone|ipad|ipod/i.test(navigator.userAgent)) {
+                alert("To install ADAPT OS, tap Share in your browser and choose Add to Home Screen.");
+                return;
+            }
+
+            if (isStandalone()) {
+                installButton.classList.add("hidden");
+                return;
+            }
+
+            alert("If your browser supports installation, open its menu and choose Install app or Add to Home screen. Make sure you are using the secure HTTPS address.");
+        });
+    }
+
+    if (isStandalone() && installButton) installButton.classList.add("hidden");
+})();
