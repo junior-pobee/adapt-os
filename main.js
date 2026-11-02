@@ -5171,10 +5171,6 @@ ${escapeHTML(text)}
 
             renderTasks();
 
-            await renderFiles();
-
-            await renderMedia();
-
             updateNotifications();
 
             /*
@@ -5234,6 +5230,11 @@ ${escapeHTML(text)}
             */
 
             showApp();
+
+            Promise.allSettled([
+                renderFiles(),
+                renderMedia()
+            ]);
         } catch (error) {
             /*
                This is the final safety net.
