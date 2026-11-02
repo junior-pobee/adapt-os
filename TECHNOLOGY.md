@@ -12,7 +12,7 @@ ADAPT OS is evolving from a browser-local productivity workspace into a modular,
 - PostgreSQL is the relational data layer, with an optional Supabase integration for authentication, database and storage.
 - Python with FastAPI provides an isolated service boundary for future AI and data-processing adapters.
 - Rust and WebAssembly are an optional compute layer for performance-sensitive browser workloads.
-- IndexedDB provides structured local-first browser storage.
+- IndexedDB provides structured local-first browser storage. The React finance module imports legacy local finance records on first use into a separate store, leaving the legacy dataset unchanged.
 - A web manifest and service worker establish the installable and offline application foundation.
 - Vitest provides unit testing; Playwright is included for future browser-level testing.
 
