@@ -1,4 +1,4 @@
-const CACHE_NAME = "adapt-os-shell-v3";
+const CACHE_NAME = "adapt-os-shell-v4";
 const CORE_ASSETS = [
     "./",
     "./index.html",
@@ -6,8 +6,10 @@ const CORE_ASSETS = [
     "./theme-fix.css",
     "./experience.css",
     "./workspace-intelligence.css",
+    "./advanced-systems.css",
     "./main.js",
     "./workspace-intelligence.js",
+    "./advanced-systems.js",
     "./manifest.json",
     "./icons/adapt-icon-192.svg",
     "./icons/adapt-icon-512.svg"
