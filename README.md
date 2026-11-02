@@ -189,3 +189,37 @@ Front-end Developer · Student Developer · Builder of ADAPT OS
 [Launch App](https://adapt-personal-app.netlify.app) · [Explore the Code](https://github.com/junior-pobee/adapt-os)
 
 </div>
+
+
+## Global platform migration
+
+The repository now contains a parallel React and Next.js application foundation under `app/` and `src/`. The existing static application is retained while features are migrated in stages.
+
+### Start the new platform
+
+```bash
+npm install
+npm run dev
+```
+
+Open `http://localhost:3000`.
+
+### Validate the platform
+
+```bash
+npm run typecheck
+npm test
+npm run build
+```
+
+### Current platform foundations
+
+- React and TypeScript interface with a responsive workspace shell.
+- Finance workspace with multi-currency records, budgets, account tracking and CSV export.
+- First-launch import of legacy local finance records into a separate IndexedDB store.
+- English, French, Spanish and Arabic interface catalogues.
+- Optional Supabase and PostgreSQL schema with row-level security.
+- Python FastAPI and Rust/WebAssembly service foundations.
+- PWA manifest, offline fallback and service worker.
+
+Cloud synchronisation, external AI providers, live bank or mobile-money access and complete legacy feature parity are not enabled by this migration stage. See [TECHNOLOGY.md](./TECHNOLOGY.md) for architecture and status.
