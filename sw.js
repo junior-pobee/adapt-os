@@ -1,8 +1,10 @@
-const CACHE_NAME = "adapt-os-shell-v1";
+const CACHE_NAME = "adapt-os-shell-v2";
 const CORE_ASSETS = [
     "./",
     "./index.html",
     "./style.css",
+    "./theme-fix.css",
+    "./experience.css",
     "./main.js",
     "./manifest.json",
     "./icons/adapt-icon-192.svg",
