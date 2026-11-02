@@ -1,7 +1,7 @@
 (() => {
     "use strict";
     const STORAGE_KEY = "adaptOS_data_v3";
-    const BUDGET_KEY = "financeBudget";
+    const BUDGET_STORAGE_KEY = "adaptOS_finance_budget_v1";
     const readData = () => {
         try {
             const value = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
@@ -23,7 +23,7 @@
         const form = document.getElementById("financeBudgetForm");
         if (!form) return;
         const data = readData();
-        const budget = Math.max(0, Number(data.settings?.[BUDGET_KEY]) || 0);
+        const budget = Math.max(0, Number(localStorage.getItem(BUDGET_STORAGE_KEY)) || 0);
         const spent = getMonthlyExpenses(data);
         const percentage = budget > 0 ? Math.min(100, spent / budget * 100) : 0;
         const amount = document.getElementById("financeBudgetAmount");
@@ -74,11 +74,12 @@
                 window.alert("Enter a monthly budget greater than zero.");
                 return;
             }
-            const data = readData();
-            data.settings = data.settings && typeof data.settings === "object" ? data.settings : {};
-            data.settings[BUDGET_KEY] = budget;
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-            renderBudget();
+            try {
+                localStorage.setItem(BUDGET_STORAGE_KEY, String(budget));
+                renderBudget();
+            } catch {
+                window.alert("Your browser could not save this budget.");
+            }
         });
         exportButton?.addEventListener("click", exportTransactions);
         window.addEventListener("storage", renderBudget);
