@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { messages, type Locale } from "@/i18n/messages";
 import { formatMoney } from "@/finance/finance-core";
+import { FinanceWorkspace } from "@/components/finance-workspace";
 import { supportedCurrencies } from "@/platform/currency";
 import { localeDirection } from "@/platform/locale";
 
@@ -58,7 +59,9 @@ export function WorkspaceShell() {
             </select>
           </div>
         </header>
-        {active === "dashboard" ? (
+        {active === "finance" ? (
+          <FinanceWorkspace locale={locale} />
+        ) : active === "dashboard" ? (
           <>
             <section className="hero">
               <div className="eyebrow">{copy.welcomeEyebrow}</div>
