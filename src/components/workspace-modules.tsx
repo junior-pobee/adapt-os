@@ -87,11 +87,12 @@ export function WorkspaceModules({ active, locale, currency, onNavigate }: { act
   const addResearch = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!researchTitle.trim()) return;
-    if (researchUrl && !/^https?:\/\//i.test(researchUrl)) {
-      setNotice("Enter a complete web address beginning with http:// or https://.");
+    const safeUrl = normalizeExternalUrl(researchUrl);
+    if (safeUrl === null) {
+      setNotice("Enter a valid HTTP or HTTPS web address.");
       return;
     }
-    const item: ResearchItem = { id: uid(), title: researchTitle.trim(), url: researchUrl.trim(), summary: researchSummary.trim(), createdAt: new Date().toISOString() };
+    const item: ResearchItem = { id: uid(), title: researchTitle.trim(), url: safeUrl, summary: researchSummary.trim(), createdAt: new Date().toISOString() };
     await persist({ ...data, research: [item, ...data.research] });
     setResearchTitle(""); setResearchUrl(""); setResearchSummary("");
   };
@@ -106,7 +107,15 @@ export function WorkspaceModules({ active, locale, currency, onNavigate }: { act
 
   const addFiles = async (list: FileList | null) => {
     if (!list?.length) return;
-    const additions: StoredFile[] = Array.from(list).map(file => ({ id: uid(), name: file.name, type: file.type || "application/octet-stream", size: file.size, updatedAt: new Date().toISOString(), blob: file }));
+    const selected = Array.from(list);
+    const currentBytes = data.files.reduce((total, file) => total + file.size, 0);
+    const validationError = validateUploadBatch(selected, currentBytes);
+    if (validationError) {
+      setNotice(validationError);
+      if (uploadRef.current) uploadRef.current.value = "";
+      return;
+    }
+    const additions: StoredFile[] = selected.map(file => ({ id: uid(), name: file.name, type: file.type || "application/octet-stream", size: file.size, updatedAt: new Date().toISOString(), blob: file }));
     await persist({ ...data, files: [...additions, ...data.files] });
     if (uploadRef.current) uploadRef.current.value = "";
   };
