@@ -30,7 +30,7 @@
     </script>
 
     <!-- Main stylesheet -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css">\n    <link rel="stylesheet" href="modern.css">
 </head>
 
 <body>
@@ -1331,6 +1331,43 @@
 
                 </div>
 
+
+                <div class="finance-command-center">
+                    <div class="finance-command-copy">
+                        <span class="finance-kicker">PERSONAL FINANCE WORKSPACE</span>
+                        <h3>Make every financial decision clearer.</h3>
+                        <p>Track your monthly plan, review your activity and keep your records organised in one private workspace.</p>
+                    </div>
+                    <div class="finance-command-actions">
+                        <button id="financeExportButton" class="secondary-button" type="button">Export transactions</button>
+                    </div>
+                    <div class="finance-budget-panel">
+                        <div class="finance-budget-heading">
+                            <div>
+                                <span class="card-label">MONTHLY SPENDING PLAN</span>
+                                <h4>Expense budget</h4>
+                            </div>
+                            <strong id="financeBudgetStatus">Not set</strong>
+                        </div>
+                        <form id="financeBudgetForm" class="finance-budget-form">
+                            <label for="financeBudgetAmount">Monthly budget (GHS)</label>
+                            <div class="finance-budget-input-row">
+                                <input id="financeBudgetAmount" type="number" min="0" step="0.01" placeholder="Set a monthly limit" required>
+                                <button class="primary-button" type="submit">Save plan</button>
+                            </div>
+                        </form>
+                        <div class="finance-budget-track"><span id="financeBudgetProgress"></span></div>
+                        <div class="finance-budget-meta"><span id="financeBudgetSpent">GHS 0.00 spent this month</span><span id="financeBudgetRemaining">Set a budget to begin</span></div>
+                    </div>
+                    <div class="finance-security-note">
+                        <span class="finance-security-icon">🔒</span>
+                        <div>
+                            <strong>Private by design</strong>
+                            <p>Your current finance records are stored in this browser on this device. Live bank or Mobile Money synchronisation is not connected, and no account credentials are requested or stored.</p>
+                        </div>
+                        <span class="finance-local-badge">LOCAL MODE</span>
+                    </div>
+                </div>
 
                 <!-- Accounts -->
 
@@ -2935,7 +2972,7 @@
      JAVASCRIPT
 ========================================================= -->
 
-<script src="main.js"></script>
+<script src="main.js"></script>\n<script src="finance-advanced.js"></script>
 
 </body>
 </html>
