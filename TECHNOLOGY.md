@@ -50,3 +50,12 @@ Not yet implemented:
 - Live banking or mobile-money connections.
 - Production deployment configuration for the Next.js application.
 - Full accessibility audit, end-to-end browser tests and performance benchmarks.
+
+
+## Workspace module migration
+
+The React shell now includes functional local-first Dashboard, Profile, File Vault, Tasks & Projects, Learning Studio, Research Desk, Notes, AI Centre and Settings modules. File Vault enforces a 20 MB per-file and 100 MB total local limit. Research links are restricted to HTTP and HTTPS. Profile, tasks, notes, research and study data are stored in IndexedDB. The File Vault stores file blobs locally.
+
+Optional Supabase email-link authentication and workspace snapshot synchronisation are implemented behind environment configuration and owner-scoped row-level security. Cloud snapshot sync currently includes profile, tasks, notes, research and study plans; binary File Vault contents are deliberately excluded.
+
+The AI Centre is an integration shell only. It does not generate responses until a provider adapter is selected, configured and secured server-side.
