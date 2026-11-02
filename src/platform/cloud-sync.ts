@@ -65,3 +65,26 @@ export const syncWorkspaceSnapshot = async (snapshot: CloudWorkspaceSnapshot) =>
   }, { onConflict: "workspace_id" });
   if (error) throw error;
 };
+
+export const restoreWorkspaceSnapshot = async () => {
+  if (!supabase) throw new Error("Cloud services are not configured.");
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+  if (userError) throw userError;
+  if (!userData.user) throw new Error("Sign in before restoring your workspace.");
+  const { data: workspace, error: workspaceError } = await supabase
+    .from("workspaces")
+    .select("id")
+    .eq("owner_id", userData.user.id)
+    .limit(1)
+    .maybeSingle();
+  if (workspaceError) throw workspaceError;
+  if (!workspace) throw new Error("No cloud workspace was found for this account.");
+  const { data, error } = await supabase
+    .from("workspace_snapshots")
+    .select("snapshot")
+    .eq("workspace_id", workspace.id)
+    .maybeSingle();
+  if (error) throw error;
+  if (!data?.snapshot) throw new Error("There is no saved cloud snapshot yet.");
+  return data.snapshot as unknown as CloudWorkspaceSnapshot;
+};
