@@ -1,56 +1,52 @@
-# ADAPT OS Technology Architecture
+# ADAPT OS Global Platform Architecture
 
 ## Product direction
 
-ADAPT OS is evolving from a browser-local productivity workspace into a modular, accessible and globally adaptable platform. The current application remains compatible with its existing static deployment while the typed architecture is introduced incrementally.
+ADAPT OS is evolving from a browser-local productivity workspace into a modular, accessible and globally adaptable platform. The existing static application remains available while the new application is developed in parallel. Existing workflows and local data must be migrated module by module rather than discarded.
 
-## Languages and formats
+## Application stack
 
-| Technology | Responsibility |
-| --- | --- |
-| HTML5 | Semantic application structure and accessible forms |
-| CSS3 | Responsive design, themes, motion and layout |
-| JavaScript (ES2022) | Current browser runtime and compatibility layer |
-| TypeScript | Strictly typed domain logic, finance calculations and future application modules |
-| JSON | Settings, structured records and integration configuration |
-| SQL | Planned server-side relational persistence when a backend is introduced |
+- React 19 and TypeScript provide the component-driven interface and typed domain logic.
+- Next.js 16 provides application routing, server rendering and server-side route handlers.
+- Tailwind CSS 4 is available for utility styling; the initial interface uses a focused responsive CSS design system.
+- PostgreSQL is the relational data layer, with an optional Supabase integration for authentication, database and storage.
+- Python with FastAPI provides an isolated service boundary for future AI and data-processing adapters.
+- Rust and WebAssembly are an optional compute layer for performance-sensitive browser workloads.
+- IndexedDB provides structured local-first browser storage.
+- A web manifest and service worker establish the installable and offline application foundation.
+- Vitest provides unit testing; Playwright is included for future browser-level testing.
 
-## Current runtime
+## Internationalisation
 
-The current production interface still runs through index.html, style.css, modern.css, main.js and finance-advanced.js. Existing pages and saved browser data are retained. TypeScript files are the foundation for the next migration stage; they are not loaded directly by browsers.
+The initial locale catalogue includes English, French, Spanish and Arabic. Arabic uses right-to-left layout direction. Currency formatting uses the browser Intl API. Ledger summaries retain separate totals for each currency rather than combining unlike currencies.
 
-## TypeScript workspace
+## Data and security
 
-- src/finance/finance.types.ts defines finance domain contracts.
-- src/finance/finance-core.ts contains pure, testable ledger calculations and CSV utilities.
-- tsconfig.json enables strict type checking.
-- package.json provides the TypeScript validation command.
+Cloud access remains disabled until public Supabase project configuration is supplied. Never place service-role keys or AI provider secrets in browser code. Provider credentials belong in server-side secret storage. Row-level security is enabled in the initial database migration. Financial provider connections require approved provider access, informed account-holder consent, verified callbacks and a dedicated server-side integration.
 
-## Global product standards
+## Migration approach
 
-- Use ISO 4217 currency codes and locale-aware formatting.
-- Use ISO country codes and explicit time-zone-aware dates for future regional features.
-- Keep personal records private and avoid placing secrets in browser code.
-- Design for keyboard navigation, screen readers, reduced motion and narrow screens.
-- Load optional features independently so a failure in one area does not block the workspace.
-- Keep financial totals separated by currency unless a trusted exchange-rate source is configured.
+The existing static application remains available during the migration. The React platform shell is developed in parallel so that legacy features can be ported incrementally. Each module must retain its expected behaviour and support data import/export compatibility before the legacy implementation is retired.
 
-## Finance integration boundary
+## Current implementation status
 
-The finance workspace currently records information entered by the user and stores it in the browser. It does not connect to bank or Mobile Money accounts, read balances from providers, or initiate payments.
+Implemented foundations:
+- React and Next.js application shell with responsive navigation and module entry points.
+- TypeScript strict compiler configuration and existing typed finance domain layer.
+- English, French, Spanish and Arabic message catalogues, including RTL direction support.
+- International currency selection and locale-aware currency formatting.
+- IndexedDB local workspace storage helper.
+- Optional Supabase client initialisation from public environment variables.
+- PostgreSQL workspace and ledger schema with row-level security policies.
+- Python FastAPI service boundary with honest not-configured and adapter-required responses.
+- Rust/WebAssembly finance calculation crate.
+- PWA manifest, service worker and offline fallback page.
+- Unit test foundation and CI workflow for TypeScript, tests, Next.js build and Python syntax.
 
-A future connection must be implemented through an authorised financial provider and a secure server-side integration. Provider credentials must never be placed in HTML, CSS, JavaScript delivered to browsers, or local storage. Account holders must complete the provider's own consent and authentication flow. Sandbox testing and verified transaction webhooks are required before any production financial operation.
-
-Useful standards and provider documentation:
-
-- GSMA Mobile Money API: https://www.gsma.com/solutions-and-impact/connectivity-for-good/mobile-for-development/mobile-money/mobile-money-api-2/
-- MTN MoMo API: https://momo.mtn.com/api/
-- Bank of Ghana: https://www.bog.gov.gh/
-
-## Migration plan
-
-1. Introduce strict TypeScript domain models without replacing the stable legacy runtime.
-2. Move finance calculations into typed, unit-testable modules.
-3. Add a server API and authenticated user accounts before introducing cloud synchronisation.
-4. Integrate only approved providers using server-side secrets, consent and webhook verification.
-5. Migrate remaining application modules one at a time, retaining compatibility and regression tests.
+Not yet implemented:
+- Complete migration of the legacy dashboard and every existing feature.
+- Production cloud synchronisation, account recovery and multi-device conflict resolution.
+- A selected AI provider adapter or live AI functionality.
+- Live banking or mobile-money connections.
+- Production deployment configuration for the Next.js application.
+- Full accessibility audit, end-to-end browser tests and performance benchmarks.
