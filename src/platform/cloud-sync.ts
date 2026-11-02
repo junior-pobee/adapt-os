@@ -5,7 +5,7 @@ export type CloudWorkspaceSnapshot = {
   notes: unknown[];
   research: unknown[];
   study: unknown[];
-  profile: Record<string, unknown>;
+  profile: object;
   updatedAt: string;
 };
 
