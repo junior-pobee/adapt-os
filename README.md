@@ -223,3 +223,16 @@ npm run build
 - PWA manifest, offline fallback and service worker.
 
 Cloud synchronisation, external AI providers, live bank or mobile-money access and complete legacy feature parity are not enabled by this migration stage. See [TECHNOLOGY.md](./TECHNOLOGY.md) for architecture and status.
+
+### Migrated workspace modules
+
+- Dashboard overview with live local counts and quick navigation.
+- Profile editor with locally saved identity and bio fields.
+- File Vault with multi-file upload, search, download, delete and local storage limits.
+- Tasks and project planner with due dates, priorities and completion tracking.
+- Learning Studio with subject-based study sessions and progress tracking.
+- Research Desk for saved links, summaries and references.
+- Notes workspace with search and local persistence.
+- AI Centre interface with honest provider-configuration status and prompt preparation.
+- Settings for language, currency, privacy, export and optional cloud account.
+- Optional Supabase email-link authentication and owner-protected workspace snapshot sync. Binary file contents remain local and are not uploaded by this snapshot sync.
