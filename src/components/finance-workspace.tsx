@@ -36,7 +36,7 @@ const importLegacyFinance = (): FinanceState => {
     const transactions: LedgerTransaction[] = (Array.isArray(legacy.transactions) ? legacy.transactions : []).map(item => ({
       id: String(item.id ?? makeId()),
       description: String(item.description ?? "Imported transaction"),
-      type: item.type === "income" ? "income" : "expense",
+      type: (item.type === "income" ? "income" : "expense") as LedgerTransaction["type"],
       category: String(item.category ?? "General"),
       amount: Math.max(0, Number(item.amount) || 0),
       currency: typeof item.currency === "string" ? item.currency : "GHS",
