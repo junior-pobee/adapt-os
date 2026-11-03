@@ -507,3 +507,5 @@ html[data-theme="light"] .companion-tool-card { background: rgba(255,255,255,.8)
   .companion-tool-arrow { display: none; }
   .companion-tool-frame { min-height: 65vh; height: 65vh; }
 }
+
+.profile-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
