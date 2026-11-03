@@ -1192,6 +1192,17 @@
         );
     }
 
+    function getAccountBalance(account) {
+        const openingBalance = Number(account.balance) || 0;
+        const activity = data.transactions
+            .filter(transaction => transaction.accountId === account.id)
+            .reduce((sum, transaction) => {
+                const amount = Number(transaction.amount) || 0;
+                return sum + (transaction.type === "income" ? amount : -amount);
+            }, 0);
+        return openingBalance + activity;
+    }
+
     function renderFinance() {
         const totals =
             calculateTotals();
@@ -1252,7 +1263,7 @@
 
                             <strong>
                                 ${money(
-                                    account.balance
+                                    getAccountBalance(account)
                                 )}
                             </strong>
 
@@ -5171,10 +5182,6 @@ ${escapeHTML(text)}
 
             renderTasks();
 
-            await renderFiles();
-
-            await renderMedia();
-
             updateNotifications();
 
             /*
@@ -5234,6 +5241,11 @@ ${escapeHTML(text)}
             */
 
             showApp();
+
+            Promise.allSettled([
+                renderFiles(),
+                renderMedia()
+            ]);
         } catch (error) {
             /*
                This is the final safety net.
