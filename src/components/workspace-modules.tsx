@@ -13,7 +13,7 @@ type Note = { id: string; title: string; body: string; updatedAt: string };
 type ResearchItem = { id: string; title: string; url: string; summary: string; createdAt: string };
 type StudyItem = { id: string; subject: string; topic: string; date: string; duration: number; completed: boolean };
 type StoredFile = { id: string; name: string; type: string; size: number; updatedAt: string; blob: Blob };
-type Profile = { displayName: string; role: string; location: string; bio: string; email: string };
+type Profile = { displayName: string; role: string; location: string; bio: string; email: string; avatarUrl?: string };
 type WorkspaceData = { tasks: Task[]; notes: Note[]; research: ResearchItem[]; study: StudyItem[]; files: StoredFile[]; profile: Profile };
 const DATA_KEY = "adapt-global-workspace-v1";
 const emptyData: WorkspaceData = { tasks: [], notes: [], research: [], study: [], files: [], profile: { displayName: "", role: "", location: "", bio: "", email: "" } };
@@ -130,6 +130,19 @@ export function WorkspaceModules({ active, locale, currency, onNavigate }: { act
     const item: StudyItem = { id: uid(), subject: studySubject.trim(), topic: studyTopic.trim(), date: studyDate, duration: Math.max(5, Number(studyDuration) || 30), completed: false };
     await persist({ ...data, study: [item, ...data.study] });
     setStudyTopic("");
+  };
+
+  const updateProfileAvatar = (file: File | undefined) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) { setNotice("Choose an image file for your profile photo."); return; }
+    if (file.size > 2 * 1024 * 1024) { setNotice("Profile photos must be 2 MB or smaller for local storage."); return; }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const nextProfile = { ...profile, avatarUrl: String(reader.result ?? "") };
+      void persist({ ...data, profile: nextProfile });
+    };
+    reader.onerror = () => setNotice("Could not read this image. Choose another file.");
+    reader.readAsDataURL(file);
   };
 
   const addFiles = async (list: FileList | null) => {
@@ -270,8 +283,8 @@ export function WorkspaceModules({ active, locale, currency, onNavigate }: { act
 
   if (active === "profile") return (
     <div className="module-workspace">
-      <section className="profile-banner"><div className="profile-avatar">{(profile.displayName.trim()[0] || "A").toUpperCase()}</div><div><div className="eyebrow">PERSONAL WORKSPACE IDENTITY</div><h2>{profile.displayName || "Your profile"}</h2><p>{profile.role || "Add a role or occupation"}{profile.location ? ` · ${profile.location}` : ""}</p></div></section>
-      <section className="panel"><div className="section-head"><div><div className="eyebrow">PROFILE DETAILS</div><h2>Manage your profile</h2></div></div><form className="module-form" onSubmit={event => { event.preventDefault(); void persist({ ...data, profile }); }}><label>Display name<input value={profile.displayName} onChange={event => setProfile({ ...profile, displayName: event.target.value })} maxLength={80} placeholder="Your name"/></label><label>Role or occupation<input value={profile.role} onChange={event => setProfile({ ...profile, role: event.target.value })} maxLength={100} placeholder="Student, developer, designer…"/></label><label>Location<input value={profile.location} onChange={event => setProfile({ ...profile, location: event.target.value })} maxLength={100} placeholder="City or region"/></label><label>Email address<input type="email" value={profile.email} onChange={event => setProfile({ ...profile, email: event.target.value })} maxLength={160} placeholder="name@example.com"/></label><label>About you<textarea rows={4} value={profile.bio} onChange={event => setProfile({ ...profile, bio: event.target.value })} maxLength={600} placeholder="A short introduction…"/></label><button className="primary" type="submit">Save profile</button></form></section>
+      <section className="profile-banner"><div className="profile-avatar">{profile.avatarUrl ? <img src={profile.avatarUrl} alt="Profile photo"/> : (profile.displayName.trim()[0] || "A").toUpperCase()}</div><div><div className="eyebrow">PERSONAL WORKSPACE IDENTITY</div><h2>{profile.displayName || "Your profile"}</h2><p>{profile.role || "Add a role or occupation"}{profile.location ? ` · ${profile.location}` : ""}</p></div></section>
+      <section className="panel"><div className="section-head"><div><div className="eyebrow">PROFILE DETAILS</div><h2>Manage your profile</h2></div></div><form className="module-form" onSubmit={event => { event.preventDefault(); void persist({ ...data, profile }); }}><label>Profile photo<input type="file" accept="image/png,image/jpeg,image/webp" onChange={event => { updateProfileAvatar(event.target.files?.[0]); event.target.value = ""; }}/></label><label>Display name<input value={profile.displayName} onChange={event => setProfile({ ...profile, displayName: event.target.value })} maxLength={80} placeholder="Your name"/></label><label>Role or occupation<input value={profile.role} onChange={event => setProfile({ ...profile, role: event.target.value })} maxLength={100} placeholder="Student, developer, designer…"/></label><label>Location<input value={profile.location} onChange={event => setProfile({ ...profile, location: event.target.value })} maxLength={100} placeholder="City or region"/></label><label>Email address<input type="email" value={profile.email} onChange={event => setProfile({ ...profile, email: event.target.value })} maxLength={160} placeholder="name@example.com"/></label><label>About you<textarea rows={4} value={profile.bio} onChange={event => setProfile({ ...profile, bio: event.target.value })} maxLength={600} placeholder="A short introduction…"/></label><button className="primary" type="submit">Save profile</button></form></section>
     </div>
   );
 
