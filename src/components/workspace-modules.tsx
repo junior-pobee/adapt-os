@@ -164,23 +164,83 @@ export function WorkspaceModules({ active, locale, currency, onNavigate }: { act
   const filteredNotes = useMemo(() => data.notes.filter(note => `${note.title} ${note.body}`.toLowerCase().includes(search.toLowerCase())), [data.notes, search]);
   const completedTasks = data.tasks.filter(task => task.done).length;
   const pendingStudy = data.study.filter(item => !item.completed).length;
+  const today = new Date();
+  const todayKey = [today.getFullYear(), String(today.getMonth() + 1).padStart(2, "0"), String(today.getDate()).padStart(2, "0")].join("-");
+  const openTasks = data.tasks.filter(task => !task.done);
+  const overdueTasks = openTasks.filter(task => task.due && task.due < todayKey);
+  const todayTasks = openTasks.filter(task => task.due === todayKey);
+  const highPriorityTasks = openTasks.filter(task => task.priority === "High");
+  const taskProgress = data.tasks.length ? Math.round(completedTasks / data.tasks.length * 100) : 0;
+  const nextTasks = [...openTasks].sort((a, b) => (a.due || "9999-12-31").localeCompare(b.due || "9999-12-31")).slice(0, 5);
+  const nextStudy = [...data.study].filter(item => !item.completed).sort((a, b) => a.date.localeCompare(b.date)).slice(0, 4);
+  const recentNotes = [...data.notes].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 3);
+  const recentResearch = [...data.research].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 3);
 
   if (!ready) return <section className="panel"><h2>Preparing your workspace</h2><p>Opening your saved local workspace…</p></section>;
 
   if (active === "dashboard") return (
-    <div className="module-workspace">
-      <section className="hero"><div className="eyebrow">YOUR PERSONAL OPERATING SPACE</div><h2>One place for everything you are becoming.</h2><p>Your work, documents, learning plans and ideas are organised in a private local-first workspace.</p><div className="hero-actions"><button className="primary" onClick={() => onNavigate("tasks")}>Plan my day</button><button className="secondary" onClick={() => onNavigate("files")}>Open File Vault</button></div></section>
-      <section className="metrics">
-        <div className="metric"><span>Open tasks</span><strong>{data.tasks.length - completedTasks}</strong><small>{completedTasks} completed</small></div>
-        <div className="metric"><span>Saved documents</span><strong>{data.files.length}</strong><small>Private local file vault</small></div>
-        <div className="metric"><span>Study sessions</span><strong>{data.study.length}</strong><small>{pendingStudy} upcoming or unfinished</small></div>
-        <div className="metric"><span>Knowledge notes</span><strong>{data.notes.length}</strong><small>{data.research.length} research references</small></div>
+    <div className="module-workspace dashboard-workspace">
+      <section className="dashboard-command">
+        <div className="dashboard-welcome">
+          <div className="eyebrow">COMMAND OVERVIEW / GLOBAL WORKSPACE</div>
+          <h2>Good {today.getHours() < 12 ? "morning" : today.getHours() < 18 ? "afternoon" : "evening"}{profile.displayName ? `, ${profile.displayName.split(" ")[0]}` : ""}. Your workspace is ready.</h2>
+          <p>One operational view of your priorities, knowledge, learning, files and personal systems.</p>
+        </div>
+        <div className="dashboard-command-actions">
+          <button className="primary" onClick={() => onNavigate("tasks")}>＋ Create task</button>
+          <button className="secondary" onClick={() => onNavigate("learning")}>＋ Study session</button>
+          <button className="secondary" onClick={() => onNavigate("files")}>⇧ Upload files</button>
+        </div>
+        <div className="dashboard-command-meta"><span><i/> WORKSPACE OVERVIEW</span><span>LOCAL-FIRST DATA CONTROL</span><span>LAST SESSION: THIS DEVICE</span></div>
       </section>
-      <div className="section-head"><div><div className="eyebrow">QUICK ACCESS</div><h2>Continue where you left off</h2></div></div>
-      <section className="module-grid">
-        {([["finance","◈","Finance","Track your money and budgets"],["files","▤","File Vault","Store and organise documents"],["tasks","✓","Tasks & Projects","Turn plans into progress"],["learning","⌘","Learning Studio","Build your study routine"],["notes","▧","Notes","Capture important ideas"],["research","⌕","Research Desk","Keep useful sources together"],["ai","✧","AI Centre","Prepare an AI-assisted workflow"],["profile","◎","My Profile","Manage your workspace identity"]] as const).map(([id,icon,title,description]) => <button key={id} className="module-card" onClick={() => onNavigate(id)}><span className="module-icon">{icon}</span><strong>{title}</strong><small>{description}</small></button>)}
+
+      <section className="metrics dashboard-metrics">
+        <div className="metric"><div className="metric-topline"><span>OPEN WORK ITEMS</span><b className="metric-icon">✓</b></div><strong>{openTasks.length}</strong><small>{todayTasks.length} due today · {overdueTasks.length} overdue</small></div>
+        <div className="metric"><div className="metric-topline"><span>COMPLETION RATE</span><b className="metric-icon">◌</b></div><strong>{taskProgress}%</strong><small>{completedTasks} completed of {data.tasks.length} tasks</small></div>
+        <div className="metric"><div className="metric-topline"><span>STUDY QUEUE</span><b className="metric-icon">⌘</b></div><strong>{pendingStudy}</strong><small>{data.study.length - pendingStudy} sessions completed</small></div>
+        <div className="metric"><div className="metric-topline"><span>FILE INVENTORY</span><b className="metric-icon">▤</b></div><strong>{data.files.length}</strong><small>{prettySize(data.files.reduce((sum, file) => sum + file.size, 0))} stored locally</small></div>
+        <div className="metric"><div className="metric-topline"><span>KNOWLEDGE ASSETS</span><b className="metric-icon">▧</b></div><strong>{data.notes.length + data.research.length}</strong><small>{data.notes.length} notes · {data.research.length} sources</small></div>
+        <div className="metric"><div className="metric-topline"><span>HIGH PRIORITY</span><b className="metric-icon">⌁</b></div><strong>{highPriorityTasks.length}</strong><small>Open high-priority work items</small></div>
       </section>
-      <div className="footer-note">ADAPT OS Global Edition · Your workspace is stored locally on this device.</div>
+
+      <div className="dashboard-grid">
+        <section className="panel dashboard-panel">
+          <div className="panel-heading"><div><div className="eyebrow">EXECUTION CONTROL</div><h3>Priority work queue</h3><p>Upcoming tasks ordered by due date and urgency.</p></div><button className="text-link" onClick={() => onNavigate("tasks")}>Open planner ↗</button></div>
+          <div className="queue-summary"><span><b>{openTasks.length}</b> active</span><span><b>{todayTasks.length}</b> due today</span><span className={overdueTasks.length ? "warning-text" : ""}><b>{overdueTasks.length}</b> overdue</span></div>
+          {nextTasks.length ? <div className="dashboard-task-list">{nextTasks.map(task => <article className="dashboard-task" key={task.id}><input type="checkbox" checked={task.done} onChange={() => toggleTask(task.id)} aria-label={`Complete ${task.title}`}/><div className="dashboard-task-copy"><strong>{task.title}</strong><small>{task.due ? task.due < todayKey ? `Overdue · ${task.due}` : task.due === todayKey ? "Due today" : `Due ${task.due}` : "No deadline"}{task.detail ? ` · ${task.detail}` : ""}</small></div><span className={`priority-tag priority-${task.priority.toLowerCase()}`}>{task.priority}</span></article>)}</div> : <div className="dashboard-empty"><span>✓</span><strong>No active tasks</strong><p>Your execution queue is clear. Add a task when something needs attention.</p><button className="secondary" onClick={() => onNavigate("tasks")}>Create a task</button></div>}
+          <div className="queue-footer"><span>COMPLETION</span><strong>{taskProgress}%</strong><div className="queue-progress"><span style={{ width: `${taskProgress}%` }}/></div></div>
+        </section>
+
+        <div className="dashboard-side-stack">
+          <section className="panel dashboard-panel">
+            <div className="panel-heading"><div><div className="eyebrow">PERFORMANCE SIGNAL</div><h3>Execution health</h3></div><span className="live-indicator">LIVE DATA</span></div>
+            <div className="execution-health"><div className="health-ring" style={{ background: `conic-gradient(var(--accent-2) ${taskProgress * 3.6}deg, var(--ring-track) 0deg)` }}><div><strong>{taskProgress}%</strong><small>DONE</small></div></div><div className="health-breakdown"><div><i className="dot dot-complete"/><span>Completed</span><b>{completedTasks}</b></div><div><i className="dot dot-open"/><span>In progress</span><b>{openTasks.length}</b></div><div><i className="dot dot-risk"/><span>Overdue</span><b>{overdueTasks.length}</b></div></div></div>
+            <div className="health-foot"><span>Based on your saved task records</span><button className="text-link" onClick={() => onNavigate("tasks")}>View details</button></div>
+          </section>
+          <section className="panel dashboard-panel">
+            <div className="panel-heading"><div><div className="eyebrow">LEARNING PIPELINE</div><h3>Next study sessions</h3></div><button className="text-link" onClick={() => onNavigate("learning")}>Study plan ↗</button></div>
+            {nextStudy.length ? <div className="study-queue">{nextStudy.map(item => <article className="study-queue-item" key={item.id}><span className="study-date">{new Date(item.date + "T12:00:00").toLocaleDateString(locale, { day: "2-digit", month: "short" })}</span><div><strong>{item.subject}</strong><small>{item.topic} · {item.duration} min</small></div><span className="study-state">PLANNED</span></article>)}</div> : <div className="compact-empty">No upcoming sessions. <button className="text-link" onClick={() => onNavigate("learning")}>Build your study plan</button></div>}
+          </section>
+        </div>
+      </div>
+
+      <div className="dashboard-lower-grid">
+        <section className="panel dashboard-panel">
+          <div className="panel-heading"><div><div className="eyebrow">KNOWLEDGE MANAGEMENT</div><h3>Recent notes</h3><p>Your latest captured ideas and working knowledge.</p></div><button className="text-link" onClick={() => onNavigate("notes")}>Knowledge base ↗</button></div>
+          {recentNotes.length ? <div className="knowledge-list">{recentNotes.map(note => <article key={note.id}><span className="knowledge-icon">▧</span><div><strong>{note.title}</strong><p>{note.body.slice(0, 116)}{note.body.length > 116 ? "…" : ""}</p><small>{new Date(note.updatedAt).toLocaleDateString(locale)}</small></div><button className="text-link" onClick={() => onNavigate("notes")}>Open</button></article>)}</div> : <div className="compact-empty">Your knowledge base is empty. <button className="text-link" onClick={() => onNavigate("notes")}>Capture an idea</button></div>}
+        </section>
+        <section className="panel dashboard-panel">
+          <div className="panel-heading"><div><div className="eyebrow">RESEARCH INTELLIGENCE</div><h3>Saved discoveries</h3><p>References and source material kept together.</p></div><button className="text-link" onClick={() => onNavigate("research")}>Research desk ↗</button></div>
+          {recentResearch.length ? <div className="research-feed">{recentResearch.map(item => <article key={item.id}><span className="research-source-icon">↗</span><div><strong>{item.title}</strong><small>{item.url || "No external URL"} · {new Date(item.createdAt).toLocaleDateString(locale)}</small></div></article>)}</div> : <div className="compact-empty">No saved research yet. <button className="text-link" onClick={() => onNavigate("research")}>Add a source</button></div>}
+        </section>
+        <section className="panel dashboard-panel system-overview">
+          <div className="panel-heading"><div><div className="eyebrow">SYSTEM INVENTORY</div><h3>Workspace modules</h3><p>Jump directly into an operational area.</p></div></div>
+          <div className="module-launch-grid">
+            {([[ "finance","◈","Finance"],["files","▤","Files"],["tasks","✓","Projects"],["learning","⌘","Learning"],["notes","▧","Notes"],["research","⌕","Research"],["ai","✧","AI Centre"],["settings","⚙","Settings"]] as const).map(([id,icon,label]) => <button key={id} onClick={() => onNavigate(id)}><span>{icon}</span><strong>{label}</strong><i>↗</i></button>)}
+          </div>
+        </section>
+      </div>
+      <div className="dashboard-system-footer"><span><i/> LOCAL WORKSPACE RECORDS</span><span>LOCAL FILES: {data.files.length}</span><span>WORK ITEMS: {data.tasks.length}</span><span>KNOWLEDGE RECORDS: {data.notes.length + data.research.length}</span><span className="dashboard-footer-spacer"/><button onClick={() => onNavigate("settings")}>DATA & PRIVACY CONTROLS ↗</button></div>
     </div>
   );
 
