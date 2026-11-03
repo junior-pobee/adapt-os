@@ -266,3 +266,30 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
         transition-duration: .01ms !important;
     }
 }
+
+
+html[data-theme="light"] .finance-section,
+html[data-theme="light"] .finance-stat-card,
+html[data-theme="light"] .finance-command-center,
+html[data-theme="light"] .finance-budget-panel {
+    color: var(--text);
+    background: #fff;
+    border-color: var(--border);
+    box-shadow: var(--shadow-small);
+}
+
+html[data-theme="light"] .finance-command-copy p,
+html[data-theme="light"] .finance-budget-form label,
+html[data-theme="light"] .finance-budget-meta {
+    color: var(--text-secondary);
+}
+
+html[data-theme="light"] .finance-budget-input-row input {
+    color: var(--text);
+    background: #fff;
+    border-color: var(--border);
+}
+
+html[data-theme="light"] .finance-budget-heading > strong {
+    color: #0f766e;
+}
