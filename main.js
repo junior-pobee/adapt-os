@@ -247,6 +247,7 @@
     function saveData() {
         try {
             localStorage.setItem(APP_KEY, JSON.stringify(data));
+            window.dispatchEvent(new Event("adaptos:data-updated"));
         } catch (error) {
             console.error("Could not save ADAPT OS data:", error);
 
