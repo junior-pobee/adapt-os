@@ -338,8 +338,8 @@ export function WorkspaceModules({ active, locale, currency, onNavigate }: { act
 
   if (active === "settings") return (
     <div className="module-workspace">
-      <CloudAccountPanel snapshot={{ tasks: data.tasks, notes: data.notes, research: data.research, study: data.study, profile: data.profile, updatedAt: new Date().toISOString() }} onRestore={async (snapshot: CloudWorkspaceSnapshot) => {
-        await persist({ ...data, tasks: snapshot.tasks as Task[], notes: snapshot.notes as Note[], research: snapshot.research as ResearchItem[], study: snapshot.study as StudyItem[], profile: snapshot.profile as Profile });
+      <CloudAccountPanel snapshot={{ tasks: data.tasks, notes: data.notes, research: data.research, study: data.study, profile: { displayName: data.profile.displayName, role: data.profile.role, location: data.profile.location, bio: data.profile.bio, email: data.profile.email }, updatedAt: new Date().toISOString() }} onRestore={async (snapshot: CloudWorkspaceSnapshot) => {
+        await persist({ ...data, tasks: snapshot.tasks as Task[], notes: snapshot.notes as Note[], research: snapshot.research as ResearchItem[], study: snapshot.study as StudyItem[], profile: { ...data.profile, ...(snapshot.profile as Profile) } });
       }}/>
 
       <section className="panel"><div className="eyebrow">PREFERENCES & PRIVACY</div><h2>Workspace settings</h2><div className="status-line"><span>Interface language</span><strong>{locale.toUpperCase()}</strong></div><div className="status-line"><span>Display currency</span><strong>{currency}</strong></div><div className="status-line"><span>Storage</span><strong>Local IndexedDB</strong></div><div className="status-line"><span>Cloud account</span><strong>Managed above</strong></div><p>Language and currency can be changed from the controls in the top navigation. Your local workspace remains on this device.</p><button className="primary" onClick={exportWorkspace}>Export workspace data</button></section>
