@@ -17,7 +17,7 @@ export const sendWorkspaceMagicLink = async (email: string) => {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized)) throw new Error("Enter a valid email address.");
   const { error } = await supabase.auth.signInWithOtp({
     email: normalized,
-    options: { emailRedirectTo: typeof window === "undefined" ? undefined : window.location.origin }
+    options: { emailRedirectTo: typeof window === "undefined" ? undefined : window.location.origin + (process.env.NEXT_PUBLIC_BASE_PATH ?? "") + "/" }
   });
   if (error) throw error;
 };

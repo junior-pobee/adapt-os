@@ -5,7 +5,8 @@ import { messages, type Locale } from "@/i18n/messages";
 import { FinanceWorkspace } from "@/components/finance-workspace";
 import { WorkspaceModules } from "@/components/workspace-modules";
 import { supportedCurrencies } from "@/platform/currency";
-import { localeDirection } from "@/platform/locale";
+import { localeDirection, resolveLocale } from "@/platform/locale";
+import { isSupportedCurrency } from "@/platform/currency";
 
 const navigation: [string, string, string][] = [
   ["dashboard","Dashboard","⌂"],["finance","Finance","◈"],["learning","Learning Studio","⌘"],
@@ -17,6 +18,48 @@ export function WorkspaceShell() {
   const [locale, setLocale] = useState<Locale>("en");
   const [currency, setCurrency] = useState("GHS");
   const [active, setActive] = useState("dashboard");
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+
+  useEffect(() => {
+    try {
+      setLocale(resolveLocale(localStorage.getItem("adapt-os-locale")));
+      const savedCurrency = localStorage.getItem("adapt-os-currency");
+      if (savedCurrency && isSupportedCurrency(savedCurrency)) setCurrency(savedCurrency);
+      const savedTheme = localStorage.getItem("adapt-os-theme");
+      if (savedTheme === "light" || savedTheme === "dark") setTheme(savedTheme);
+    } catch {
+      setLocale("en");
+    }
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    const themeColor = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+    themeColor?.setAttribute("content", theme === "light" ? "#f4f6fb" : "#090d18");
+    try {
+      localStorage.setItem("adapt-os-theme", theme);
+    } catch {
+      return;
+    }
+  }, [theme]);
+
+  useEffect(() => {
+    document.documentElement.lang = locale;
+    document.documentElement.dir = localeDirection(locale);
+    try {
+      localStorage.setItem("adapt-os-locale", locale);
+    } catch {
+      return;
+    }
+  }, [locale]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("adapt-os-currency", currency);
+    } catch {
+      return;
+    }
+  }, [currency]);
   const copy = messages[locale];
   const direction = localeDirection(locale);
   const title = navigation.find(item => item[0] === active)?.[1] ?? copy.workspace;
@@ -52,10 +95,11 @@ export function WorkspaceShell() {
             <select id="currency-select" className="select" value={currency} onChange={event => setCurrency(event.target.value)}>
               {supportedCurrencies.map(code => <option key={code} value={code}>{code}</option>)}
             </select>
+            <button className="theme-toggle" onClick={() => setTheme(current => current === "dark" ? "light" : "dark")} aria-label={"Switch to " + (theme === "dark" ? "light" : "dark") + " theme"} title={"Switch to " + (theme === "dark" ? "light" : "dark") + " theme"}>{theme === "dark" ? "☼" : "☾"}</button>
             <button className="profile-shortcut" onClick={() => setActive("profile")} aria-label="Open profile">◎</button>
           </div>
         </header>
-        {active === "finance" ? <FinanceWorkspace locale={locale}/> : <WorkspaceModules active={active} locale={locale} currency={currency} onNavigate={setActive}/>}
+        {active === "finance" ? <FinanceWorkspace locale={locale} currency={currency} onCurrencyChange={setCurrency}/> : <WorkspaceModules active={active} locale={locale} currency={currency} onNavigate={setActive}/>}
       </main>
     </div>
   );

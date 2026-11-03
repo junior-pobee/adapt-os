@@ -50,9 +50,8 @@ const importLegacyFinance = (): FinanceState => {
   }
 };
 
-export function FinanceWorkspace({ locale }: { locale: string }) {
+export function FinanceWorkspace({ locale, currency, onCurrencyChange }: { locale: string; currency: string; onCurrencyChange: (currency: string) => void }) {
   const [ledger, setLedger] = useState<FinanceState>(emptyState);
-  const [currency, setCurrency] = useState("GHS");
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
   const [type, setType] = useState<"income" | "expense">("expense");
@@ -177,7 +176,7 @@ export function FinanceWorkspace({ locale }: { locale: string }) {
     <div className="finance-workspace">
       <div className="finance-toolbar">
         <div><div className="eyebrow">GLOBAL FINANCE</div><h2>Finance command centre</h2><p>Multi-currency records, budgets and account tracking.</p></div>
-        <label className="finance-field">Display currency<select className="select" value={currency} onChange={event => setCurrency(event.target.value)}>{supportedCurrencies.map(code => <option key={code}>{code}</option>)}</select></label>
+        <label className="finance-field">Display currency<select className="select" value={currency} onChange={event => onCurrencyChange(event.target.value)}>{supportedCurrencies.map(code => <option key={code}>{code}</option>)}</select></label>
       </div>
       <section className="metrics">
         <div className="metric"><span>Income</span><strong>{formatMoney(summary?.income ?? 0, currency, locale)}</strong><small>{summary?.transactionCount ?? 0} ledger records</small></div>

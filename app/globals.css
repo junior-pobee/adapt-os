@@ -210,3 +210,40 @@ a { color: inherit; text-decoration: none; }
   .topbar { align-items: flex-start; gap: 12px; flex-direction: column; }
   .top-actions { width: 100%; }
 }
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f3f6fc;
+  --panel: rgba(255,255,255,.94);
+  --panel-strong: #ffffff;
+  --line: rgba(41,58,89,.14);
+  --muted: #63718a;
+  --text: #172238;
+  --accent: #6256d9;
+  --accent-2: #087f76;
+  --danger: #c43f5d;
+}
+html[data-theme="light"] body {
+  background: radial-gradient(ellipse at 15% 0%, rgba(104,91,226,.10), transparent 34rem), radial-gradient(ellipse at 90% 10%, rgba(36,177,164,.08), transparent 32rem), var(--bg);
+}
+html[data-theme="light"] .sidebar { background: rgba(255,255,255,.88); border-color: var(--line); }
+html[data-theme="light"] .nav-item { color: #4c5b75; }
+html[data-theme="light"] .nav-item:hover { color: #172238; background: rgba(30,45,75,.055); }
+html[data-theme="light"] .nav-item.active { color: #302b78; background: rgba(104,91,226,.11); border-color: rgba(104,91,226,.22); }
+html[data-theme="light"] .nav-symbol { color: #6256d9; }
+html[data-theme="light"] .hero { background: linear-gradient(115deg, rgba(104,91,226,.12), rgba(255,255,255,.94)); border-color: rgba(104,91,226,.18); }
+html[data-theme="light"] .hero p, html[data-theme="light"] .secondary, html[data-theme="light"] .status-line { color: #465570; }
+html[data-theme="light"] .select, html[data-theme="light"] .search, html[data-theme="light"] .secondary, html[data-theme="light"] .module-form input, html[data-theme="light"] .module-form textarea, html[data-theme="light"] .module-form select, html[data-theme="light"] .module-search, html[data-theme="light"] .finance-form input, html[data-theme="light"] .finance-form select, html[data-theme="light"] .budget-form input, html[data-theme="light"] .account-form input, html[data-theme="light"] .account-form select { color: #172238; background: #fff; border-color: rgba(41,58,89,.18); }
+html[data-theme="light"] .profile-banner { background: linear-gradient(115deg, rgba(104,91,226,.10), rgba(8,127,118,.045)); }
+html[data-theme="light"] .profile-avatar, html[data-theme="light"] .vault-file-icon, html[data-theme="light"] .module-icon { color: #5147b8; background: rgba(104,91,226,.10); }
+html[data-theme="light"] .vault-card, html[data-theme="light"] .note-card { background: rgba(255,255,255,.78); }
+html[data-theme="light"] .item-main a { color: #5147b8; }
+html[data-theme="light"] .income-value { color: #087f61; }
+html[data-theme="light"] .expense-value, html[data-theme="light"] .text-action { color: #bd405a; }
+html[data-theme="light"] .status-pill, html[data-theme="light"] .metric small { color: #087f61; }
+html[data-theme="light"] .budget-track { background: rgba(41,58,89,.10); }
+html[data-theme="light"] .notice { color: #285d55; background: rgba(8,127,118,.06); border-color: rgba(8,127,118,.18); }
+.theme-toggle { display: grid; place-items: center; width: 38px; height: 38px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); color: var(--text); font-size: 20px; }
+html[dir="rtl"] .sidebar { border-right: 0; border-left: 1px solid var(--line); }
+html[dir="rtl"] .nav-item, html[dir="rtl"] .brand-button { text-align: right; }
+@media (max-width: 760px) { html[dir="rtl"] .sidebar { border-left: 0; border-bottom: 1px solid var(--line); } }

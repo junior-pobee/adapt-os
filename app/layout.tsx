@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: "ADAPT OS | Global Workspace",
   description: "A secure, adaptive and local-first workspace for productivity, learning and personal finance.",
   applicationName: "ADAPT OS",
-  manifest: "/manifest.json"
+  manifest: `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/manifest.json`
 };
 
 export const viewport: Viewport = {
