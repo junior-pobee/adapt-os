@@ -83,6 +83,7 @@
         });
         exportButton?.addEventListener("click", exportTransactions);
         window.addEventListener("storage", renderBudget);
+        window.addEventListener("adaptos:data-updated", renderBudget);
         renderBudget();
     };
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initialize, { once: true });
