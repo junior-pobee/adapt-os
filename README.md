@@ -102,7 +102,7 @@ The production base path is `/adapt-os`. The service worker and installable web 
 
 ## Accounts, profiles and cloud setup
 
-Email/password account creation and login use Supabase Auth. Profile names are stored in authenticated user metadata, and profile photos are uploaded to the `adapt-avatars` Supabase Storage bucket. Apply all SQL files in `supabase/migrations` before using avatar uploads. Configure `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in the deployment environment. Email confirmation and password-reset redirects must include the deployed `/adapt-os/account/` route.
+Email/password account creation and login use Supabase Auth. Profile names are stored in authenticated user metadata, and profile photos are uploaded to the `adapt-avatars` Supabase Storage bucket. Apply all SQL files in `supabase/migrations` before using avatar uploads. Add `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` as GitHub Actions repository secrets under Settings → Secrets and variables → Actions so the Pages build can enable the account experience. Email confirmation and password-reset redirects must include the deployed `/adapt-os/account/` route.
 
 Cloud sync is optional. To enable it, configure these public browser environment variables in the deployment environment:
 
