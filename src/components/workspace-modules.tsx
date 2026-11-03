@@ -5,6 +5,7 @@ import { localWorkspaceStorage } from "@/platform/storage";
 import type { Locale } from "@/i18n/messages";
 import { normalizeExternalUrl, validateUploadBatch } from "@/platform/workspace-validation";
 import { CloudAccountPanel } from "@/components/cloud-account-panel";
+import { AccountWorkspace } from "@/components/account-workspace";
 import type { CloudWorkspaceSnapshot } from "@/platform/cloud-sync";
 
 type Task = { id: string; title: string; detail: string; due: string; priority: "Low" | "Medium" | "High"; done: boolean; createdAt: string };
@@ -31,6 +32,16 @@ const normalizeWorkspaceData = (value: unknown): WorkspaceData => {
 
 const uid = () => typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `item-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 const prettySize = (size: number) => size < 1024 * 1024 ? `${Math.max(1, Math.round(size / 1024))} KB` : `${(size / 1024 / 1024).toFixed(1)} MB`;
+const companionTools = [
+  { id: "tool-commerce", label: "Commerce", path: "commerce.html", description: "Product discovery, storefront and shopping workspace", icon: "🛍" },
+  { id: "tool-snake", label: "Snake", path: "snake.html", description: "Classic arcade game with touch and keyboard controls", icon: "◉" },
+  { id: "tool-chess", label: "Chess", path: "chess.html", description: "Play against the bot or challenge another player", icon: "♟" },
+  { id: "tool-students", label: "Student Edition", path: "students.html", description: "Academic planning, practice and student tools", icon: "▣" },
+  { id: "tool-studio", label: "Studio", path: "studio.html", description: "Creative media and design workspace", icon: "✦" },
+  { id: "tool-translate", label: "Translator", path: "translate.html", description: "Translate text between supported languages", icon: "文" },
+  { id: "tool-google", label: "Google Mode", path: "google.html", description: "Search and web utility experience", icon: "⌕" },
+  { id: "tool-lumen", label: "Lumen", path: "Lumen.html", description: "Search, research, images and code tools", icon: "✧" }
+];
 
 export function WorkspaceModules({ active, locale, currency, onNavigate }: { active: string; locale: Locale; currency: string; onNavigate: (id: string) => void }) {
   const [data, setData] = useState<WorkspaceData>(emptyData);
@@ -239,10 +250,23 @@ export function WorkspaceModules({ active, locale, currency, onNavigate }: { act
             {([[ "finance","◈","Finance"],["files","▤","Files"],["tasks","✓","Projects"],["learning","⌘","Learning"],["notes","▧","Notes"],["research","⌕","Research"],["ai","✧","AI Centre"],["settings","⚙","Settings"]] as const).map(([id,icon,label]) => <button key={id} onClick={() => onNavigate(id)}><span>{icon}</span><strong>{label}</strong><i>↗</i></button>)}
           </div>
         </section>
+        <section className="panel dashboard-panel companion-tools-panel">
+          <div className="panel-heading"><div><div className="eyebrow">ADAPT OS ECOSYSTEM</div><h3>Companion tools</h3><p>Open the full working experiences without leaving your main workspace.</p></div><span className="status-pill">8 TOOLS</span></div>
+          <div className="companion-tool-grid">{companionTools.map(tool => <button className="companion-tool-card" key={tool.id} onClick={() => onNavigate(tool.id)}><span className="companion-tool-icon">{tool.icon}</span><span className="companion-tool-copy"><strong>{tool.label}</strong><small>{tool.description}</small></span><span className="companion-tool-arrow">↗</span></button>)}</div>
+        </section>
       </div>
       <div className="dashboard-system-footer"><span><i/> LOCAL WORKSPACE RECORDS</span><span>LOCAL FILES: {data.files.length}</span><span>WORK ITEMS: {data.tasks.length}</span><span>KNOWLEDGE RECORDS: {data.notes.length + data.research.length}</span><span className="dashboard-footer-spacer"/><button onClick={() => onNavigate("settings")}>DATA & PRIVACY CONTROLS ↗</button></div>
     </div>
   );
+
+  if (active === "account") return <AccountWorkspace />;
+
+  if (active.startsWith("tool-")) {
+    const tool = companionTools.find(item => item.id === active);
+    const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+    if (!tool) return <section className="panel"><h2>Tool unavailable</h2><p>This companion tool could not be found.</p></section>;
+    return <div className="module-workspace companion-tool-view"><section className="companion-tool-toolbar"><div><div className="eyebrow">ADAPT OS COMPANION SUITE</div><h2>{tool.label}</h2><p>{tool.description}</p></div><button className="secondary" onClick={() => onNavigate("dashboard")}>← Workspace overview</button><a className="secondary" href={basePath + "/" + tool.path} target="_blank" rel="noreferrer">Open separately ↗</a></section><iframe className="companion-tool-frame" title={tool.label + " workspace"} src={basePath + "/" + tool.path} allow="clipboard-read; clipboard-write; fullscreen; camera; microphone" allowFullScreen /></div>;
+  }
 
   if (active === "profile") return (
     <div className="module-workspace">
