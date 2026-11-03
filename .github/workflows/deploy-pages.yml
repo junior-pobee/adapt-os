@@ -16,7 +16,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  build-and-deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -24,6 +24,34 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm install
+      - name: Validate React platform
+        run: |
+          npm run typecheck
+          npm test
+      - name: Build React platform for GitHub Pages
+        run: npm run build
+        env:
+          NEXT_PUBLIC_BASE_PATH: /adapt-os
+      - name: Preserve companion experiences
+        run: |
+          for file in *.html; do
+            if [ "$file" != "index.html" ]; then cp "$file" out/; fi
+          done
+          for pattern in *.css *.js *.jpg *.jpeg *.png *.svg *.webp *.ico; do
+            for file in $pattern; do
+              [ -f "$file" ] || continue
+              [ "$file" = "sw.js" ] && continue
+              cp "$file" out/
+            done
+          done
+          if [ -d icons ]; then cp -R icons out/icons; fi
+          touch out/.nojekyll
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
         with:
@@ -31,7 +59,7 @@ jobs:
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: out
       - name: Deploy site
         id: deployment
         uses: actions/deploy-pages@v4
