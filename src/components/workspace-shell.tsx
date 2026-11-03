@@ -17,7 +17,16 @@ const navigation: [string, string, string, string][] = [
   ["notes","Knowledge Base","▧","KNOWLEDGE"],
   ["ai","AI Centre","✧","INTELLIGENCE"],
   ["profile","Identity & Profile","◎","SYSTEM"],
-  ["settings","System Settings","⚙","SYSTEM"]
+  ["settings","System Settings","⚙","SYSTEM"],
+  ["account","Account & Sign In","◎","SYSTEM"],
+  ["tool-commerce","Commerce","🛍","TOOLS"],
+  ["tool-snake","Snake","◉","TOOLS"],
+  ["tool-chess","Chess","♟","TOOLS"],
+  ["tool-students","Student Edition","▣","TOOLS"],
+  ["tool-studio","Studio","✦","TOOLS"],
+  ["tool-translate","Translator","文","TOOLS"],
+  ["tool-google","Google Mode","⌕","TOOLS"],
+  ["tool-lumen","Lumen","✧","TOOLS"]
 ];
 
 export function WorkspaceShell() {
@@ -90,7 +99,7 @@ export function WorkspaceShell() {
         </button>
         <div className="sidebar-identity"><span className="identity-pulse"/><span>PERSONAL WORKSPACE</span><strong>LOCAL INSTANCE</strong></div>
         <nav className="nav-list" aria-label="Main navigation">
-          {(["COMMAND","MANAGE","KNOWLEDGE","INTELLIGENCE","SYSTEM"] as const).map(group => (
+          {(["COMMAND","MANAGE","KNOWLEDGE","INTELLIGENCE","TOOLS","SYSTEM"] as const).map(group => (
             <div className="nav-group" key={group}>
               <div className="nav-label">{group}</div>
               {navigation.filter(item => item[3] === group).map(([id,label,icon]) => (
@@ -120,7 +129,7 @@ export function WorkspaceShell() {
             <label className="sr-only" htmlFor="currency-select">Currency</label>
             <select id="currency-select" className="select" value={currency} onChange={event => setCurrency(event.target.value)}>{supportedCurrencies.map(code => <option key={code} value={code}>{code}</option>)}</select>
             <button className="theme-toggle" onClick={() => setTheme(current => current === "dark" ? "light" : "dark")} aria-label={"Switch to " + (theme === "dark" ? "light" : "dark") + " theme"} title={"Switch to " + (theme === "dark" ? "light" : "dark") + " theme"}>{theme === "dark" ? "☼" : "☾"}</button>
-            <button className="profile-shortcut" onClick={() => setActive("profile")} aria-label="Open profile">◎</button>
+            <button className="profile-shortcut" onClick={() => setActive("account")} aria-label="Open account and sign in">◎</button>
           </div>
         </header>
         <div className="workspace-statusbar"><span><i/> WORKSPACE MODE: LOCAL</span><span>SECURE LOCAL SESSION</span><span>REGION-AWARE WORKSPACE</span><span className="statusbar-spacer"/><span>ACTIVE MODULE <b>{title.toUpperCase()}</b></span></div>
