@@ -29,18 +29,19 @@ self.addEventListener("fetch", event => {
   const url = new URL(request.url);
   if (request.method !== "GET" || url.origin !== self.location.origin || !url.pathname.startsWith(`${BASE_PATH}/`)) return;
   if (url.pathname.startsWith(`${BASE_PATH}/api/`)) return;
-  event.respondWith(
-    fetch(request).then(response => {
+  event.respondWith((async () => {
+    try {
+      const response = await fetch(request);
       if (response.ok) {
         const copy = response.clone();
         event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.put(request, copy)));
       }
       return response;
-    }).catch(async () => {
+    } catch {
       const cached = await caches.match(request);
       if (cached) return cached;
       if (request.mode === "navigate") return (await caches.match(`${BASE_PATH}/offline.html`)) ?? Response.error();
       return Response.error();
-    })
-  );
+    }
+  })());
 });
