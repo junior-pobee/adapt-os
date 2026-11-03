@@ -44,6 +44,7 @@
     <link rel="stylesheet" href="workspace-intelligence.css">
     <link rel="stylesheet" href="advanced-systems.css">
     <link rel="stylesheet" href="legacy-sections.css">
+    <link rel="stylesheet" href="modern.css">
 </head>
 
 <body>
@@ -1348,6 +1349,38 @@
 
                 </div>
 
+
+                <div class="finance-command-center">
+                    <div class="finance-command-copy">
+                        <span class="finance-kicker">PERSONAL FINANCE WORKSPACE</span>
+                        <h3>Make every financial decision clearer.</h3>
+                        <p>Track your monthly plan, review your activity and keep your records organised in one private workspace.</p>
+                    </div>
+                    <div class="finance-command-actions">
+                        <button id="financeExportButton" class="secondary-button" type="button">Export transactions</button>
+                    </div>
+                    <div class="finance-budget-panel">
+                        <div class="finance-budget-heading">
+                            <div>
+                                <span class="card-label">MONTHLY SPENDING PLAN</span>
+                                <h4>Expense budget</h4>
+                            </div>
+                            <strong id="financeBudgetStatus">Not set</strong>
+                        </div>
+                        <form id="financeBudgetForm" class="finance-budget-form">
+                            <label for="financeBudgetAmount">Monthly budget (GHS)</label>
+                            <div class="finance-budget-input-row">
+                                <input id="financeBudgetAmount" type="number" min="0" step="0.01" placeholder="Set a monthly limit" required>
+                                <button class="primary-button" type="submit">Save plan</button>
+                            </div>
+                        </form>
+                        <div class="finance-budget-track"><span id="financeBudgetProgress"></span></div>
+                        <div class="finance-budget-meta">
+                            <span id="financeBudgetSpent">GH₵ 0.00 spent this month</span>
+                            <span id="financeBudgetRemaining">Set a budget to begin</span>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Accounts -->
 
@@ -2953,6 +2986,7 @@
 ========================================================= -->
 
 <script src="main.js"></script>
+<script src="finance-advanced.js"></script>
 <script src="workspace-intelligence.js"></script>
 <script src="advanced-systems.js"></script>
 <script src="legacy-analytics.js"></script>
