@@ -406,6 +406,10 @@ body {
 
 
 .nav-item {
+    text-decoration: none;
+    border: 0;
+    font: inherit;
+    cursor: pointer;
 
     width: 100%;
 
@@ -1306,6 +1310,8 @@ body {
 
 
 .quick-action {
+    display: block;
+    text-decoration: none;
 
     text-align: left;
 
