@@ -191,7 +191,7 @@ export function WorkspaceModules({ active, locale, currency, onNavigate }: { act
           <button className="secondary" onClick={() => onNavigate("learning")}>＋ Study session</button>
           <button className="secondary" onClick={() => onNavigate("files")}>⇧ Upload files</button>
         </div>
-        <div className="dashboard-command-meta"><span><i/> ALL SYSTEMS AVAILABLE</span><span>LOCAL-FIRST DATA CONTROL</span><span>LAST SESSION: THIS DEVICE</span></div>
+        <div className="dashboard-command-meta"><span><i/> WORKSPACE OVERVIEW</span><span>LOCAL-FIRST DATA CONTROL</span><span>LAST SESSION: THIS DEVICE</span></div>
       </section>
 
       <section className="metrics dashboard-metrics">
@@ -240,7 +240,7 @@ export function WorkspaceModules({ active, locale, currency, onNavigate }: { act
           </div>
         </section>
       </div>
-      <div className="dashboard-system-footer"><span><i/> INDEXEDDB STORAGE READY</span><span>LOCAL FILES: {data.files.length}</span><span>WORK ITEMS: {data.tasks.length}</span><span>KNOWLEDGE RECORDS: {data.notes.length + data.research.length}</span><span className="dashboard-footer-spacer"/><button onClick={() => onNavigate("settings")}>DATA & PRIVACY CONTROLS ↗</button></div>
+      <div className="dashboard-system-footer"><span><i/> LOCAL WORKSPACE RECORDS</span><span>LOCAL FILES: {data.files.length}</span><span>WORK ITEMS: {data.tasks.length}</span><span>KNOWLEDGE RECORDS: {data.notes.length + data.research.length}</span><span className="dashboard-footer-spacer"/><button onClick={() => onNavigate("settings")}>DATA & PRIVACY CONTROLS ↗</button></div>
     </div>
   );
 
