@@ -49,7 +49,7 @@ The React workspace includes English, French, Spanish and Arabic language catalo
 
 ## Companion experiences
 
-The repository also retains the existing standalone experiences, including Lumen, Student Edition, Studio, Google Mode, Chess, Snake, Commerce and Translator.
+The React workspace includes a unified Companion Tools area that opens the retained Commerce, Snake, Chess, Student Edition, Studio, Google Mode, Lumen and Translator experiences inside the main app. Each tool can also be opened in its own tab. Their original standalone pages and supporting assets remain published.
 
 The previous HTML workspace is preserved at the [legacy workspace page](https://junior-pobee.github.io/adapt-os/legacy.html). The React workspace is the primary application at the site root.
 
@@ -100,7 +100,9 @@ GitHub Actions builds the Next.js static export and publishes the generated `out
 
 The production base path is `/adapt-os`. The service worker and installable web app manifest use that project path so that app assets and offline navigation remain within the correct GitHub Pages scope.
 
-## Optional cloud setup
+## Accounts, profiles and cloud setup
+
+Email/password account creation and login use Supabase Auth. Profile names are stored in authenticated user metadata, and profile photos are uploaded to the `adapt-avatars` Supabase Storage bucket. Apply all SQL files in `supabase/migrations` before using avatar uploads. Add `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` as GitHub Actions repository secrets under Settings → Secrets and variables → Actions so the Pages build can enable the account experience. Email confirmation and password-reset redirects must include the deployed `/adapt-os/account/` route.
 
 Cloud sync is optional. To enable it, configure these public browser environment variables in the deployment environment:
 

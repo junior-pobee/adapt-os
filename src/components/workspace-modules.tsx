@@ -5,6 +5,7 @@ import { localWorkspaceStorage } from "@/platform/storage";
 import type { Locale } from "@/i18n/messages";
 import { normalizeExternalUrl, validateUploadBatch } from "@/platform/workspace-validation";
 import { CloudAccountPanel } from "@/components/cloud-account-panel";
+import { AccountWorkspace } from "@/components/account-workspace";
 import type { CloudWorkspaceSnapshot } from "@/platform/cloud-sync";
 
 type Task = { id: string; title: string; detail: string; due: string; priority: "Low" | "Medium" | "High"; done: boolean; createdAt: string };
@@ -12,7 +13,7 @@ type Note = { id: string; title: string; body: string; updatedAt: string };
 type ResearchItem = { id: string; title: string; url: string; summary: string; createdAt: string };
 type StudyItem = { id: string; subject: string; topic: string; date: string; duration: number; completed: boolean };
 type StoredFile = { id: string; name: string; type: string; size: number; updatedAt: string; blob: Blob };
-type Profile = { displayName: string; role: string; location: string; bio: string; email: string };
+type Profile = { displayName: string; role: string; location: string; bio: string; email: string; avatarUrl?: string };
 type WorkspaceData = { tasks: Task[]; notes: Note[]; research: ResearchItem[]; study: StudyItem[]; files: StoredFile[]; profile: Profile };
 const DATA_KEY = "adapt-global-workspace-v1";
 const emptyData: WorkspaceData = { tasks: [], notes: [], research: [], study: [], files: [], profile: { displayName: "", role: "", location: "", bio: "", email: "" } };
@@ -31,6 +32,16 @@ const normalizeWorkspaceData = (value: unknown): WorkspaceData => {
 
 const uid = () => typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `item-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 const prettySize = (size: number) => size < 1024 * 1024 ? `${Math.max(1, Math.round(size / 1024))} KB` : `${(size / 1024 / 1024).toFixed(1)} MB`;
+const companionTools = [
+  { id: "tool-commerce", label: "Commerce", path: "commerce.html", description: "Product discovery, storefront and shopping workspace", icon: "🛍" },
+  { id: "tool-snake", label: "Snake", path: "snake.html", description: "Classic arcade game with touch and keyboard controls", icon: "◉" },
+  { id: "tool-chess", label: "Chess", path: "chess.html", description: "Play against the bot or challenge another player", icon: "♟" },
+  { id: "tool-students", label: "Student Edition", path: "students.html", description: "Academic planning, practice and student tools", icon: "▣" },
+  { id: "tool-studio", label: "Studio", path: "studio.html", description: "Creative media and design workspace", icon: "✦" },
+  { id: "tool-translate", label: "Translator", path: "translate.html", description: "Translate text between supported languages", icon: "文" },
+  { id: "tool-google", label: "Google Mode", path: "google.html", description: "Search and web utility experience", icon: "⌕" },
+  { id: "tool-lumen", label: "Lumen", path: "Lumen.html", description: "Search, research, images and code tools", icon: "✧" }
+];
 
 export function WorkspaceModules({ active, locale, currency, onNavigate }: { active: string; locale: Locale; currency: string; onNavigate: (id: string) => void }) {
   const [data, setData] = useState<WorkspaceData>(emptyData);
@@ -119,6 +130,19 @@ export function WorkspaceModules({ active, locale, currency, onNavigate }: { act
     const item: StudyItem = { id: uid(), subject: studySubject.trim(), topic: studyTopic.trim(), date: studyDate, duration: Math.max(5, Number(studyDuration) || 30), completed: false };
     await persist({ ...data, study: [item, ...data.study] });
     setStudyTopic("");
+  };
+
+  const updateProfileAvatar = (file: File | undefined) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) { setNotice("Choose an image file for your profile photo."); return; }
+    if (file.size > 2 * 1024 * 1024) { setNotice("Profile photos must be 2 MB or smaller for local storage."); return; }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const nextProfile = { ...profile, avatarUrl: String(reader.result ?? "") };
+      void persist({ ...data, profile: nextProfile });
+    };
+    reader.onerror = () => setNotice("Could not read this image. Choose another file.");
+    reader.readAsDataURL(file);
   };
 
   const addFiles = async (list: FileList | null) => {
@@ -239,15 +263,28 @@ export function WorkspaceModules({ active, locale, currency, onNavigate }: { act
             {([[ "finance","◈","Finance"],["files","▤","Files"],["tasks","✓","Projects"],["learning","⌘","Learning"],["notes","▧","Notes"],["research","⌕","Research"],["ai","✧","AI Centre"],["settings","⚙","Settings"]] as const).map(([id,icon,label]) => <button key={id} onClick={() => onNavigate(id)}><span>{icon}</span><strong>{label}</strong><i>↗</i></button>)}
           </div>
         </section>
+        <section className="panel dashboard-panel companion-tools-panel">
+          <div className="panel-heading"><div><div className="eyebrow">ADAPT OS ECOSYSTEM</div><h3>Companion tools</h3><p>Open the full working experiences without leaving your main workspace.</p></div><span className="status-pill">8 TOOLS</span></div>
+          <div className="companion-tool-grid">{companionTools.map(tool => <button className="companion-tool-card" key={tool.id} onClick={() => onNavigate(tool.id)}><span className="companion-tool-icon">{tool.icon}</span><span className="companion-tool-copy"><strong>{tool.label}</strong><small>{tool.description}</small></span><span className="companion-tool-arrow">↗</span></button>)}</div>
+        </section>
       </div>
       <div className="dashboard-system-footer"><span><i/> LOCAL WORKSPACE RECORDS</span><span>LOCAL FILES: {data.files.length}</span><span>WORK ITEMS: {data.tasks.length}</span><span>KNOWLEDGE RECORDS: {data.notes.length + data.research.length}</span><span className="dashboard-footer-spacer"/><button onClick={() => onNavigate("settings")}>DATA & PRIVACY CONTROLS ↗</button></div>
     </div>
   );
 
+  if (active === "account") return <AccountWorkspace />;
+
+  if (active.startsWith("tool-")) {
+    const tool = companionTools.find(item => item.id === active);
+    const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+    if (!tool) return <section className="panel"><h2>Tool unavailable</h2><p>This companion tool could not be found.</p></section>;
+    return <div className="module-workspace companion-tool-view"><section className="companion-tool-toolbar"><div><div className="eyebrow">ADAPT OS COMPANION SUITE</div><h2>{tool.label}</h2><p>{tool.description}</p></div><button className="secondary" onClick={() => onNavigate("dashboard")}>← Workspace overview</button><a className="secondary" href={basePath + "/" + tool.path} target="_blank" rel="noreferrer">Open separately ↗</a></section><iframe className="companion-tool-frame" title={tool.label + " workspace"} src={basePath + "/" + tool.path} allow="clipboard-read; clipboard-write; fullscreen; camera; microphone" allowFullScreen /></div>;
+  }
+
   if (active === "profile") return (
     <div className="module-workspace">
-      <section className="profile-banner"><div className="profile-avatar">{(profile.displayName.trim()[0] || "A").toUpperCase()}</div><div><div className="eyebrow">PERSONAL WORKSPACE IDENTITY</div><h2>{profile.displayName || "Your profile"}</h2><p>{profile.role || "Add a role or occupation"}{profile.location ? ` · ${profile.location}` : ""}</p></div></section>
-      <section className="panel"><div className="section-head"><div><div className="eyebrow">PROFILE DETAILS</div><h2>Manage your profile</h2></div></div><form className="module-form" onSubmit={event => { event.preventDefault(); void persist({ ...data, profile }); }}><label>Display name<input value={profile.displayName} onChange={event => setProfile({ ...profile, displayName: event.target.value })} maxLength={80} placeholder="Your name"/></label><label>Role or occupation<input value={profile.role} onChange={event => setProfile({ ...profile, role: event.target.value })} maxLength={100} placeholder="Student, developer, designer…"/></label><label>Location<input value={profile.location} onChange={event => setProfile({ ...profile, location: event.target.value })} maxLength={100} placeholder="City or region"/></label><label>Email address<input type="email" value={profile.email} onChange={event => setProfile({ ...profile, email: event.target.value })} maxLength={160} placeholder="name@example.com"/></label><label>About you<textarea rows={4} value={profile.bio} onChange={event => setProfile({ ...profile, bio: event.target.value })} maxLength={600} placeholder="A short introduction…"/></label><button className="primary" type="submit">Save profile</button></form></section>
+      <section className="profile-banner"><div className="profile-avatar">{profile.avatarUrl ? <img src={profile.avatarUrl} alt="Profile photo"/> : (profile.displayName.trim()[0] || "A").toUpperCase()}</div><div><div className="eyebrow">PERSONAL WORKSPACE IDENTITY</div><h2>{profile.displayName || "Your profile"}</h2><p>{profile.role || "Add a role or occupation"}{profile.location ? ` · ${profile.location}` : ""}</p></div></section>
+      <section className="panel"><div className="section-head"><div><div className="eyebrow">PROFILE DETAILS</div><h2>Manage your profile</h2></div></div><form className="module-form" onSubmit={event => { event.preventDefault(); void persist({ ...data, profile }); }}><label>Profile photo<input type="file" accept="image/png,image/jpeg,image/webp" onChange={event => { updateProfileAvatar(event.target.files?.[0]); event.target.value = ""; }}/></label><label>Display name<input value={profile.displayName} onChange={event => setProfile({ ...profile, displayName: event.target.value })} maxLength={80} placeholder="Your name"/></label><label>Role or occupation<input value={profile.role} onChange={event => setProfile({ ...profile, role: event.target.value })} maxLength={100} placeholder="Student, developer, designer…"/></label><label>Location<input value={profile.location} onChange={event => setProfile({ ...profile, location: event.target.value })} maxLength={100} placeholder="City or region"/></label><label>Email address<input type="email" value={profile.email} onChange={event => setProfile({ ...profile, email: event.target.value })} maxLength={160} placeholder="name@example.com"/></label><label>About you<textarea rows={4} value={profile.bio} onChange={event => setProfile({ ...profile, bio: event.target.value })} maxLength={600} placeholder="A short introduction…"/></label><button className="primary" type="submit">Save profile</button></form></section>
     </div>
   );
 
@@ -301,8 +338,8 @@ export function WorkspaceModules({ active, locale, currency, onNavigate }: { act
 
   if (active === "settings") return (
     <div className="module-workspace">
-      <CloudAccountPanel snapshot={{ tasks: data.tasks, notes: data.notes, research: data.research, study: data.study, profile: data.profile, updatedAt: new Date().toISOString() }} onRestore={async (snapshot: CloudWorkspaceSnapshot) => {
-        await persist({ ...data, tasks: snapshot.tasks as Task[], notes: snapshot.notes as Note[], research: snapshot.research as ResearchItem[], study: snapshot.study as StudyItem[], profile: snapshot.profile as Profile });
+      <CloudAccountPanel snapshot={{ tasks: data.tasks, notes: data.notes, research: data.research, study: data.study, profile: { displayName: data.profile.displayName, role: data.profile.role, location: data.profile.location, bio: data.profile.bio, email: data.profile.email }, updatedAt: new Date().toISOString() }} onRestore={async (snapshot: CloudWorkspaceSnapshot) => {
+        await persist({ ...data, tasks: snapshot.tasks as Task[], notes: snapshot.notes as Note[], research: snapshot.research as ResearchItem[], study: snapshot.study as StudyItem[], profile: { ...data.profile, ...(snapshot.profile as Profile) } });
       }}/>
 
       <section className="panel"><div className="eyebrow">PREFERENCES & PRIVACY</div><h2>Workspace settings</h2><div className="status-line"><span>Interface language</span><strong>{locale.toUpperCase()}</strong></div><div className="status-line"><span>Display currency</span><strong>{currency}</strong></div><div className="status-line"><span>Storage</span><strong>Local IndexedDB</strong></div><div className="status-line"><span>Cloud account</span><strong>Managed above</strong></div><p>Language and currency can be changed from the controls in the top navigation. Your local workspace remains on this device.</p><button className="primary" onClick={exportWorkspace}>Export workspace data</button></section>
