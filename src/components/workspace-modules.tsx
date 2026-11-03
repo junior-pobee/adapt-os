@@ -16,6 +16,19 @@ type Profile = { displayName: string; role: string; location: string; bio: strin
 type WorkspaceData = { tasks: Task[]; notes: Note[]; research: ResearchItem[]; study: StudyItem[]; files: StoredFile[]; profile: Profile };
 const DATA_KEY = "adapt-global-workspace-v1";
 const emptyData: WorkspaceData = { tasks: [], notes: [], research: [], study: [], files: [], profile: { displayName: "", role: "", location: "", bio: "", email: "" } };
+const normalizeWorkspaceData = (value: unknown): WorkspaceData => {
+  if (!value || typeof value !== "object") return emptyData;
+  const saved = value as Partial<WorkspaceData>;
+  return {
+    tasks: Array.isArray(saved.tasks) ? saved.tasks : [],
+    notes: Array.isArray(saved.notes) ? saved.notes : [],
+    research: Array.isArray(saved.research) ? saved.research : [],
+    study: Array.isArray(saved.study) ? saved.study : [],
+    files: Array.isArray(saved.files) ? saved.files.filter(file => file && typeof file.id === "string" && typeof file.name === "string" && file.blob instanceof Blob) : [],
+    profile: saved.profile && typeof saved.profile === "object" ? { ...emptyData.profile, ...saved.profile } : emptyData.profile
+  };
+};
+
 const uid = () => typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `item-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 const prettySize = (size: number) => size < 1024 * 1024 ? `${Math.max(1, Math.round(size / 1024))} KB` : `${(size / 1024 / 1024).toFixed(1)} MB`;
 
@@ -46,8 +59,9 @@ export function WorkspaceModules({ active, locale, currency, onNavigate }: { act
     void localWorkspaceStorage.get<WorkspaceData>(DATA_KEY).then(saved => {
       if (!live) return;
       if (saved) {
-        setData(saved);
-        setProfile(saved.profile ?? emptyData.profile);
+        const normalized = normalizeWorkspaceData(saved);
+        setData(normalized);
+        setProfile(normalized.profile);
       }
       setReady(true);
     }).catch(() => {
@@ -128,7 +142,7 @@ export function WorkspaceModules({ active, locale, currency, onNavigate }: { act
     anchor.href = url;
     anchor.download = file.name;
     anchor.click();
-    URL.revokeObjectURL(url);
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
   const exportWorkspace = () => {
