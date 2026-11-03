@@ -430,3 +430,6 @@ html[data-theme="light"] .queue-summary { background: rgba(20,30,50,.025); }
   .dashboard-command-meta span:last-child { display: none; }
   .dashboard-system-footer { gap: 8px; }
 }
+
+:root { --ring-track: rgba(155,177,216,.13); }
+html[data-theme="light"] { --ring-track: rgba(41,58,89,.12); }
