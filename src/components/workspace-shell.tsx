@@ -86,7 +86,7 @@ export function WorkspaceShell() {
       <aside className="sidebar">
         <button className="brand brand-button" onClick={() => setActive("dashboard")} aria-label="ADAPT OS home">
           <div className="brand-mark">A<span>+</span></div>
-          <div><strong>ADAPT OS</strong><small>OPERATING ENVIRONMENT <i>v4.0</i></small></div>
+          <div><strong>ADAPT OS</strong><small>OPERATING ENVIRONMENT <i>v3.0.0</i></small></div>
         </button>
         <div className="sidebar-identity"><span className="identity-pulse"/><span>PERSONAL WORKSPACE</span><strong>LOCAL INSTANCE</strong></div>
         <nav className="nav-list" aria-label="Main navigation">
@@ -103,10 +103,9 @@ export function WorkspaceShell() {
           ))}
         </nav>
         <div className="sidebar-system">
-          <div className="system-heading"><span>WORKSPACE HEALTH</span><b>OPERATIONAL</b></div>
-          <div className="system-track"><span/></div>
-          <div className="system-foot"><span><i/> Local storage</span><span>Private</span></div>
-          <div className="sidebar-version">ADAPT OS GLOBAL EDITION <span>BUILD 4.0</span></div>
+          <div className="system-heading"><span>DATA MODE</span><b>LOCAL-FIRST</b></div>
+          <div className="system-foot"><span><i/> Device storage</span><span>Private</span></div>
+          <div className="sidebar-version">ADAPT OS GLOBAL EDITION <span>v3.0.0</span></div>
         </div>
       </aside>
       <main className="main">
@@ -124,7 +123,7 @@ export function WorkspaceShell() {
             <button className="profile-shortcut" onClick={() => setActive("profile")} aria-label="Open profile">◎</button>
           </div>
         </header>
-        <div className="workspace-statusbar"><span><i/> SYSTEM STATUS: NOMINAL</span><span>SECURE LOCAL SESSION</span><span>REGION-AWARE WORKSPACE</span><span className="statusbar-spacer"/><span>ACTIVE MODULE <b>{title.toUpperCase()}</b></span></div>
+        <div className="workspace-statusbar"><span><i/> WORKSPACE MODE: LOCAL</span><span>SECURE LOCAL SESSION</span><span>REGION-AWARE WORKSPACE</span><span className="statusbar-spacer"/><span>ACTIVE MODULE <b>{title.toUpperCase()}</b></span></div>
         {active === "finance" ? <FinanceWorkspace locale={locale} currency={currency} onCurrencyChange={setCurrency}/> : <WorkspaceModules active={active} locale={locale} currency={currency} onNavigate={setActive}/>}
       </main>
     </div>
