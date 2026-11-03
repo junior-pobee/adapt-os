@@ -3,12 +3,10 @@ name: ADAPT OS Platform CI
 on:
   push:
     branches:
-      - feature/adapt-os-react-global-platform
+      - main
   pull_request:
     branches:
       - main
-      - fix/adapt-os-ui-markup
-      - feature/adapt-os-global-modernization
 
 jobs:
   web-platform:
@@ -22,6 +20,8 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
+        env:
+          NEXT_PUBLIC_BASE_PATH: /adapt-os
 
   python-service:
     runs-on: ubuntu-latest
