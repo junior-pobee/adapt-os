@@ -35,7 +35,6 @@ export function WorkspaceShell() {
   const [currency, setCurrency] = useState("GHS");
   const [active, setActive] = useState("dashboard");
   const [theme, setTheme] = useState<"dark" | "light">("dark");
-  const [commandQuery, setCommandQuery] = useState("");
 
   useEffect(() => {
     try {
@@ -81,16 +80,6 @@ export function WorkspaceShell() {
   const copy = messages[locale];
   const direction = localeDirection(locale);
   const title = navigation.find(item => item[0] === active)?.[1] ?? copy.workspace;
-  const runCommand = () => {
-    const query = commandQuery.trim().toLowerCase();
-    if (!query) return;
-    const match = navigation.find(item => item[0].includes(query) || item[1].toLowerCase().includes(query));
-    if (match) {
-      setActive(match[0]);
-      setCommandQuery("");
-    }
-  };
-
   return (
     <div className="shell" dir={direction}>
       <aside className="sidebar">
