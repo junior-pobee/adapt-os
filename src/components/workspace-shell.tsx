@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { messages, type Locale } from "@/i18n/messages";
 import { FinanceWorkspace } from "@/components/finance-workspace";
+import { CommandCentre } from "@/components/command-centre";
 import { WorkspaceModules } from "@/components/workspace-modules";
 import { supportedCurrencies, isSupportedCurrency } from "@/platform/currency";
 import { localeDirection, resolveLocale } from "@/platform/locale";
@@ -34,7 +35,6 @@ export function WorkspaceShell() {
   const [currency, setCurrency] = useState("GHS");
   const [active, setActive] = useState("dashboard");
   const [theme, setTheme] = useState<"dark" | "light">("dark");
-  const [commandQuery, setCommandQuery] = useState("");
 
   useEffect(() => {
     try {
@@ -80,16 +80,6 @@ export function WorkspaceShell() {
   const copy = messages[locale];
   const direction = localeDirection(locale);
   const title = navigation.find(item => item[0] === active)?.[1] ?? copy.workspace;
-  const runCommand = () => {
-    const query = commandQuery.trim().toLowerCase();
-    if (!query) return;
-    const match = navigation.find(item => item[0].includes(query) || item[1].toLowerCase().includes(query));
-    if (match) {
-      setActive(match[0]);
-      setCommandQuery("");
-    }
-  };
-
   return (
     <div className="shell" dir={direction}>
       <aside className="sidebar">
@@ -121,9 +111,7 @@ export function WorkspaceShell() {
         <header className="topbar">
           <div className="topbar-heading"><div className="breadcrumb"><span>ADAPT OS</span><b>/</b><strong>{title.toUpperCase()}</strong></div><h1>{active === "dashboard" ? copy.dashboardTitle : title}</h1><p className="topbar-date">{new Date().toLocaleDateString(locale, { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</p></div>
           <div className="top-actions">
-            <form className="command-search" onSubmit={event => { event.preventDefault(); runCommand(); }}>
-              <span>⌕</span><input aria-label="Find a workspace" value={commandQuery} onChange={event => setCommandQuery(event.target.value)} placeholder="Jump to a workspace…"/><kbd>↵</kbd>
-            </form>
+            <CommandCentre modules={navigation.map(([id,label,icon,group]) => ({ id, label, icon, group }))} onNavigate={setActive} theme={theme} onThemeToggle={() => setTheme(current => current === "dark" ? "light" : "dark")}/>
             <label className="sr-only" htmlFor="locale-select">Language</label>
             <select id="locale-select" className="select" value={locale} onChange={event => setLocale(event.target.value as Locale)}><option value="en">EN</option><option value="fr">FR</option><option value="es">ES</option><option value="ar">AR</option></select>
             <label className="sr-only" htmlFor="currency-select">Currency</label>
